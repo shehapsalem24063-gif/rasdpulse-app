@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import Link from "next/link";
 import { translations, type Locale } from "@/i18n/translations";
 
@@ -24,7 +23,6 @@ export default function SettingsPage() {
     fetch("/api/settings").then((r) => r.json()).then((data) => {
       if (data.agentUrl) setAgentUrl(data.agentUrl);
       if (data.agentKey) setAgentKey(data.agentKey);
-      if (data.telegramToken) setTelegramToken(data.telegramToken);
       if (data.telegramChat) setTelegramChat(data.telegramChat);
     }).catch(() => {});
   }, [router]);
@@ -50,57 +48,69 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#050505]" dir={locale === "ar" ? "rtl" : "ltr"}>
-      <header className="border-b border-[#1a2a4a] bg-[#0c1222]/70 backdrop-blur">
-        <div className="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Image src="/logo.png" alt="Logo" width={36} height={36} />
-            <h1 className="font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">{t.settings}</h1>
+    <div style={{ minHeight: "100vh", background: "#030712" }} dir={locale === "ar" ? "rtl" : "ltr"}>
+      <header style={{ borderBottom: "1px solid #1e293b", background: "rgba(11,18,32,0.9)", backdropFilter: "blur(12px)" }}>
+        <div style={{ maxWidth: 720, margin: "0 auto", padding: "12px 20px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <div style={{
+              width: 36, height: 36, borderRadius: 8,
+              background: "linear-gradient(135deg, #0ea5e9, #22d3ee)",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontWeight: 800, color: "#030712", fontSize: 16
+            }}>R</div>
+            <h1 className="rp-gradient-text" style={{ fontSize: 18, fontWeight: 700, margin: 0 }}>{t.settings}</h1>
           </div>
-          <div className="flex items-center gap-2">
-            <button onClick={() => setLocale("en")} className={`px-2 py-1 text-xs rounded ${locale === "en" ? "bg-cyan-500/20 text-cyan-400" : "text-gray-500"}`}>EN</button>
-            <button onClick={() => setLocale("ar")} className={`px-2 py-1 text-xs rounded ${locale === "ar" ? "bg-cyan-500/20 text-cyan-400" : "text-gray-500"}`}>عربي</button>
-            <Link href="/dashboard" className="px-3 py-1.5 text-sm rounded-lg border border-[#1a2a4a] hover:border-cyan-500/50">{t.dashboard}</Link>
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <button onClick={() => setLocale("en")} style={{ padding: "4px 10px", borderRadius: 6, border: "none", background: locale === "en" ? "rgba(34,211,238,0.2)" : "transparent", color: locale === "en" ? "#22d3ee" : "#64748b", cursor: "pointer", fontSize: 12 }}>EN</button>
+            <button onClick={() => setLocale("ar")} style={{ padding: "4px 10px", borderRadius: 6, border: "none", background: locale === "ar" ? "rgba(34,211,238,0.2)" : "transparent", color: locale === "ar" ? "#22d3ee" : "#64748b", cursor: "pointer", fontSize: 12 }}>عربي</button>
+            <Link href="/dashboard" style={{ padding: "6px 14px", borderRadius: 8, border: "1px solid #1e293b", color: "#e2e8f0", fontSize: 13, textDecoration: "none" }}>{t.dashboard}</Link>
           </div>
         </div>
       </header>
 
-      <main className="max-w-3xl mx-auto px-4 py-8">
-        <form onSubmit={handleSave} className="space-y-6">
-          <div className="bg-[#0c1222] border border-[#1a2a4a] rounded-xl p-6">
-            <h2 className="text-lg font-semibold mb-4 text-cyan-400">{t.connectGNS3}</h2>
-            <div className="space-y-4">
+      <main style={{ maxWidth: 720, margin: "0 auto", padding: "32px 20px" }}>
+        <form onSubmit={handleSave} style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+          <div className="rp-card" style={{ padding: 24 }}>
+            <h2 style={{ fontSize: 16, fontWeight: 600, color: "#22d3ee", margin: "0 0 16px" }}>{t.connectGNS3}</h2>
+            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
               <div>
-                <label className="block text-sm text-gray-400 mb-1">{t.agentUrl}</label>
-                <input type="url" value={agentUrl} onChange={(e) => setAgentUrl(e.target.value)} placeholder="https://your-agent.example.com" className="w-full px-4 py-3 rounded-lg bg-[#050505] border border-[#1a2a4a] focus:border-cyan-500 focus:outline-none" />
-                <p className="text-xs text-gray-500 mt-1">URL of the GNS3 Agent (use Cloudflare Tunnel)</p>
+                <label style={{ display: "block", fontSize: 13, color: "#94a3b8", marginBottom: 6 }}>{t.agentUrl}</label>
+                <input type="url" value={agentUrl} onChange={(e) => setAgentUrl(e.target.value)} placeholder="https://xxxx.trycloudflare.com" className="rp-input" />
+                <p style={{ fontSize: 12, color: "#64748b", marginTop: 6 }}>رابط الـ Agent (Cloudflare Tunnel)</p>
               </div>
               <div>
-                <label className="block text-sm text-gray-400 mb-1">{t.agentKey}</label>
-                <input type="text" value={agentKey} onChange={(e) => setAgentKey(e.target.value)} placeholder="rasdpulse-agent-key" className="w-full px-4 py-3 rounded-lg bg-[#050505] border border-[#1a2a4a] focus:border-cyan-500 focus:outline-none" />
+                <label style={{ display: "block", fontSize: 13, color: "#94a3b8", marginBottom: 6 }}>{t.agentKey}</label>
+                <input type="text" value={agentKey} onChange={(e) => setAgentKey(e.target.value)} placeholder="rasdpulse-agent-key" className="rp-input" />
               </div>
             </div>
           </div>
 
-          <div className="bg-[#0c1222] border border-[#1a2a4a] rounded-xl p-6">
-            <h2 className="text-lg font-semibold mb-4 text-cyan-400">Telegram Alerts</h2>
-            <div className="space-y-4">
+          <div className="rp-card" style={{ padding: 24 }}>
+            <h2 style={{ fontSize: 16, fontWeight: 600, color: "#22d3ee", margin: "0 0 16px" }}>Telegram Alerts</h2>
+            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
               <div>
-                <label className="block text-sm text-gray-400 mb-1">{t.telegramToken}</label>
-                <input type="text" value={telegramToken} onChange={(e) => setTelegramToken(e.target.value)} placeholder="123456:ABC-DEF..." className="w-full px-4 py-3 rounded-lg bg-[#050505] border border-[#1a2a4a] focus:border-cyan-500 focus:outline-none" />
+                <label style={{ display: "block", fontSize: 13, color: "#94a3b8", marginBottom: 6 }}>{t.telegramToken}</label>
+                <input type="text" value={telegramToken} onChange={(e) => setTelegramToken(e.target.value)} placeholder="123456:ABC-DEF..." className="rp-input" />
               </div>
               <div>
-                <label className="block text-sm text-gray-400 mb-1">{t.telegramChat}</label>
-                <input type="text" value={telegramChat} onChange={(e) => setTelegramChat(e.target.value)} placeholder="-1001234567890" className="w-full px-4 py-3 rounded-lg bg-[#050505] border border-[#1a2a4a] focus:border-cyan-500 focus:outline-none" />
+                <label style={{ display: "block", fontSize: 13, color: "#94a3b8", marginBottom: 6 }}>{t.telegramChat}</label>
+                <input type="text" value={telegramChat} onChange={(e) => setTelegramChat(e.target.value)} placeholder="-1001234567890" className="rp-input" />
               </div>
             </div>
           </div>
 
           {message && (
-            <div className={`p-3 rounded-lg text-sm ${message.includes("success") || message.includes("نجاح") ? "bg-green-500/10 text-green-400 border border-green-500/30" : "bg-red-500/10 text-red-400"}`}>{message}</div>
+            <div style={{
+              padding: 12, borderRadius: 10, fontSize: 14,
+              background: message.includes("success") || message.includes("نجاح") ? "rgba(34,197,94,0.1)" : "rgba(239,68,68,0.1)",
+              border: message.includes("success") || message.includes("نجاح") ? "1px solid rgba(34,197,94,0.3)" : "1px solid rgba(239,68,68,0.3)",
+              color: message.includes("success") || message.includes("نجاح") ? "#4ade80" : "#f87171"
+            }}>{message}</div>
           )}
 
-          <button type="submit" disabled={loading} className="w-full py-3 rounded-lg bg-gradient-to-r from-blue-500 to-cyan-500 text-black font-semibold hover:opacity-90 transition disabled:opacity-50">{loading ? "..." : t.save}</button>
+          <button type="submit" disabled={loading} className="rp-btn-primary" style={{ width: "100%" }}>
+            {loading ? "..." : t.save}
+          </button>
         </form>
       </main>
     </div>

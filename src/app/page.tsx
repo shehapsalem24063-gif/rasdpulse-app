@@ -1,6 +1,9 @@
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth";
 
+// This page reads cookies, so it must be dynamic
+export const dynamic = "force-dynamic";
+
 export default async function Home() {
   const user = await getCurrentUser();
   if (user) {

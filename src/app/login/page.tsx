@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import Link from "next/link";
 import { translations, type Locale } from "@/i18n/translations";
 
@@ -40,33 +39,57 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-[#050505]">
-      <div className="absolute top-4 right-4 flex gap-2">
-        <button onClick={() => setLocale("en")} className={`px-3 py-1 rounded text-sm ${locale === "en" ? "bg-cyan-500/20 text-cyan-400" : "text-gray-500"}`}>EN</button>
-        <button onClick={() => setLocale("ar")} className={`px-3 py-1 rounded text-sm ${locale === "ar" ? "bg-cyan-500/20 text-cyan-400" : "text-gray-500"}`}>عربي</button>
+    <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: 16, background: "#030712" }}>
+      <div style={{ position: "absolute", top: 16, right: 16, display: "flex", gap: 8 }}>
+        <button onClick={() => setLocale("en")} style={{ padding: "4px 12px", borderRadius: 6, border: "none", background: locale === "en" ? "rgba(34,211,238,0.2)" : "transparent", color: locale === "en" ? "#22d3ee" : "#64748b", cursor: "pointer" }}>EN</button>
+        <button onClick={() => setLocale("ar")} style={{ padding: "4px 12px", borderRadius: 6, border: "none", background: locale === "ar" ? "rgba(34,211,238,0.2)" : "transparent", color: locale === "ar" ? "#22d3ee" : "#64748b", cursor: "pointer" }}>عربي</button>
       </div>
-      <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <Image src="/logo.png" alt="RasdPulse" width={120} height={120} className="mx-auto mb-4" priority />
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">{t.appName}</h1>
-          <p className="text-gray-400 mt-2 text-sm">{t.tagline}</p>
+
+      <div style={{ width: "100%", maxWidth: 420 }}>
+        <div style={{ textAlign: "center", marginBottom: 32 }}>
+          <div style={{
+            width: 80, height: 80, margin: "0 auto 16px",
+            borderRadius: 16,
+            background: "linear-gradient(135deg, #0ea5e9, #22d3ee)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            fontSize: 36, fontWeight: 800, color: "#030712",
+            boxShadow: "0 0 40px rgba(34, 211, 238, 0.3)"
+          }}>R</div>
+          <h1 className="rp-gradient-text" style={{ fontSize: 32, fontWeight: 700, margin: 0 }}>RasdPulse</h1>
+          <p style={{ color: "#64748b", marginTop: 8, fontSize: 14 }}>{t.tagline}</p>
         </div>
-        <form onSubmit={handleSubmit} className="bg-[#0c1222] border border-[#1a2a4a] rounded-2xl p-8 shadow-2xl glow" dir={locale === "ar" ? "rtl" : "ltr"}>
-          <h2 className="text-xl font-semibold mb-6 text-center">{t.login}</h2>
-          {error && <div className="mb-4 p-3 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-sm">{error}</div>}
-          <div className="space-y-4">
+
+        <form onSubmit={handleSubmit} className="rp-card" style={{ padding: 32 }} dir={locale === "ar" ? "rtl" : "ltr"}>
+          <h2 style={{ fontSize: 20, fontWeight: 600, textAlign: "center", marginBottom: 24 }}>{t.login}</h2>
+
+          {error && (
+            <div style={{ marginBottom: 16, padding: 12, borderRadius: 10, background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.3)", color: "#f87171", fontSize: 14 }}>
+              {error}
+            </div>
+          )}
+
+          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
             <div>
-              <label className="block text-sm text-gray-400 mb-1">{t.email}</label>
-              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="w-full px-4 py-3 rounded-lg bg-[#050505] border border-[#1a2a4a] focus:border-cyan-500 focus:outline-none transition" placeholder="admin@rasdpulse.com" />
+              <label style={{ display: "block", fontSize: 13, color: "#94a3b8", marginBottom: 6 }}>{t.email}</label>
+              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="rp-input" placeholder="admin@rasdpulse.com" />
             </div>
             <div>
-              <label className="block text-sm text-gray-400 mb-1">{t.password}</label>
-              <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required className="w-full px-4 py-3 rounded-lg bg-[#050505] border border-[#1a2a4a] focus:border-cyan-500 focus:outline-none transition" placeholder="••••••••" />
+              <label style={{ display: "block", fontSize: 13, color: "#94a3b8", marginBottom: 6 }}>{t.password}</label>
+              <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required className="rp-input" placeholder="••••••••" />
             </div>
-            <button type="submit" disabled={loading} className="w-full py-3 rounded-lg bg-gradient-to-r from-blue-500 to-cyan-500 text-black font-semibold hover:opacity-90 transition disabled:opacity-50">{loading ? "..." : t.login}</button>
+            <button type="submit" disabled={loading} className="rp-btn-primary" style={{ width: "100%", marginTop: 8 }}>
+              {loading ? "..." : t.login}
+            </button>
           </div>
-          <p className="mt-6 text-center text-sm text-gray-400">{t.dontHaveAccount} <Link href="/register" className="text-cyan-400 hover:underline">{t.register}</Link></p>
-          <div className="mt-4 p-3 rounded-lg bg-cyan-500/5 border border-cyan-500/20 text-xs text-cyan-300/80">Demo: admin@rasdpulse.com / admin123</div>
+
+          <p style={{ marginTop: 24, textAlign: "center", fontSize: 14, color: "#64748b" }}>
+            {t.dontHaveAccount}{" "}
+            <Link href="/register">{t.register}</Link>
+          </p>
+
+          <div style={{ marginTop: 16, padding: 12, borderRadius: 10, background: "rgba(34,211,238,0.05)", border: "1px solid rgba(34,211,238,0.15)", fontSize: 12, color: "#67e8f9" }}>
+            Demo: admin@rasdpulse.com / admin123
+          </div>
         </form>
       </div>
     </div>

@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import Link from "next/link";
 import { translations, type Locale } from "@/i18n/translations";
 import { calculateRisk, type GNS3Node, type DeviceRisk } from "@/lib/gns3";
@@ -70,91 +69,105 @@ export default function DashboardPage() {
   const activeCount = nodes.filter((n) => n.status === "started").length;
   const criticalCount = risks.filter((r) => r.riskLevel === "critical" || r.riskLevel === "high").length;
   const overallRisk = risks.length === 0 ? 0 : Math.round(risks.reduce((sum, r) => sum + r.riskScore, 0) / risks.length);
-  const riskColor = overallRisk >= 70 ? "text-red-400" : overallRisk >= 40 ? "text-yellow-400" : "text-green-400";
+  const riskColor = overallRisk >= 70 ? "#f87171" : overallRisk >= 40 ? "#facc15" : "#4ade80";
 
   return (
-    <div className="min-h-screen bg-[#050505]" dir={locale === "ar" ? "rtl" : "ltr"}>
-      <header className="border-b border-[#1a2a4a] bg-[#0c1222]/70 backdrop-blur sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Image src="/logo.png" alt="Logo" width={40} height={40} />
+    <div style={{ minHeight: "100vh", background: "#030712" }} dir={locale === "ar" ? "rtl" : "ltr"}>
+      {/* Header */}
+      <header style={{ borderBottom: "1px solid #1e293b", background: "rgba(11,18,32,0.9)", backdropFilter: "blur(12px)", position: "sticky", top: 0, zIndex: 50 }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto", padding: "12px 20px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <div style={{
+              width: 40, height: 40, borderRadius: 10,
+              background: "linear-gradient(135deg, #0ea5e9, #22d3ee)",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontWeight: 800, color: "#030712", fontSize: 18
+            }}>R</div>
             <div>
-              <h1 className="font-bold text-lg bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">{t.appName}</h1>
-              <p className="text-xs text-gray-500">{user?.name} ({user?.role})</p>
+              <h1 className="rp-gradient-text" style={{ fontSize: 18, fontWeight: 700, margin: 0 }}>RasdPulse</h1>
+              <p style={{ fontSize: 12, color: "#64748b", margin: 0 }}>{user?.name} ({user?.role})</p>
             </div>
           </div>
-          <div className="flex items-center gap-3">
-            <div className="flex gap-1">
-              <button onClick={() => setLocale("en")} className={`px-2 py-1 text-xs rounded ${locale === "en" ? "bg-cyan-500/20 text-cyan-400" : "text-gray-500"}`}>EN</button>
-              <button onClick={() => setLocale("ar")} className={`px-2 py-1 text-xs rounded ${locale === "ar" ? "bg-cyan-500/20 text-cyan-400" : "text-gray-500"}`}>عربي</button>
+
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <div style={{ display: "flex", gap: 4 }}>
+              <button onClick={() => setLocale("en")} style={{ padding: "4px 10px", borderRadius: 6, border: "none", background: locale === "en" ? "rgba(34,211,238,0.2)" : "transparent", color: locale === "en" ? "#22d3ee" : "#64748b", cursor: "pointer", fontSize: 12 }}>EN</button>
+              <button onClick={() => setLocale("ar")} style={{ padding: "4px 10px", borderRadius: 6, border: "none", background: locale === "ar" ? "rgba(34,211,238,0.2)" : "transparent", color: locale === "ar" ? "#22d3ee" : "#64748b", cursor: "pointer", fontSize: 12 }}>عربي</button>
             </div>
-            <Link href="/settings" className="px-3 py-1.5 text-sm rounded-lg border border-[#1a2a4a] hover:border-cyan-500/50 transition">{t.settings}</Link>
-            <button onClick={handleLogout} className="px-3 py-1.5 text-sm rounded-lg text-red-400 border border-red-500/30 hover:bg-red-500/10 transition">{t.logout}</button>
+            <Link href="/settings" style={{ padding: "6px 14px", borderRadius: 8, border: "1px solid #1e293b", color: "#e2e8f0", fontSize: 13, textDecoration: "none" }}>{t.settings}</Link>
+            <button onClick={handleLogout} style={{ padding: "6px 14px", borderRadius: 8, border: "1px solid rgba(239,68,68,0.3)", background: "transparent", color: "#f87171", fontSize: 13, cursor: "pointer" }}>{t.logout}</button>
           </div>
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 py-6">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <div className="bg-[#0c1222] border border-[#1a2a4a] rounded-xl p-4">
-            <p className="text-xs text-gray-400 mb-1">{t.totalDevices}</p>
-            <p className="text-2xl font-bold">{nodes.length}</p>
-          </div>
-          <div className="bg-[#0c1222] border border-[#1a2a4a] rounded-xl p-4">
-            <p className="text-xs text-gray-400 mb-1">{t.activeDevices}</p>
-            <p className="text-2xl font-bold text-green-400">{activeCount}</p>
-          </div>
-          <div className="bg-[#0c1222] border border-[#1a2a4a] rounded-xl p-4">
-            <p className="text-xs text-gray-400 mb-1">{t.criticalAlerts}</p>
-            <p className="text-2xl font-bold text-red-400">{criticalCount}</p>
-          </div>
-          <div className="bg-[#0c1222] border border-[#1a2a4a] rounded-xl p-4">
-            <p className="text-xs text-gray-400 mb-1">{t.overallRisk}</p>
-            <p className={`text-2xl font-bold ${riskColor}`}>{overallRisk}%</p>
-          </div>
+      <main style={{ maxWidth: 1200, margin: "0 auto", padding: "24px 20px" }}>
+        {/* Stats */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 16, marginBottom: 28 }}>
+          {[
+            { label: t.totalDevices, value: nodes.length, color: "#e2e8f0" },
+            { label: t.activeDevices, value: activeCount, color: "#4ade80" },
+            { label: t.criticalAlerts, value: criticalCount, color: "#f87171" },
+            { label: t.overallRisk, value: overallRisk + "%", color: riskColor },
+          ].map((s) => (
+            <div key={s.label} className="rp-card" style={{ padding: 20 }}>
+              <p style={{ fontSize: 12, color: "#94a3b8", margin: "0 0 6px" }}>{s.label}</p>
+              <p style={{ fontSize: 28, fontWeight: 700, margin: 0, color: s.color }}>{s.value}</p>
+            </div>
+          ))}
         </div>
 
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold">{t.devices}</h2>
-          <button onClick={loadData} disabled={loading} className="px-4 py-2 text-sm rounded-lg bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/20 transition disabled:opacity-50">{loading ? "..." : t.refresh}</button>
+        {/* Devices header */}
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+          <h2 style={{ fontSize: 18, fontWeight: 600, margin: 0 }}>{t.devices}</h2>
+          <button onClick={loadData} disabled={loading} style={{
+            padding: "8px 16px", borderRadius: 8, border: "1px solid rgba(34,211,238,0.3)",
+            background: "rgba(34,211,238,0.1)", color: "#22d3ee", fontSize: 13, cursor: "pointer"
+          }}>{loading ? "..." : t.refresh}</button>
         </div>
 
         {error && (
-          <div className="mb-6 p-4 rounded-xl bg-yellow-500/10 border border-yellow-500/30 text-yellow-300 text-sm">
+          <div style={{ marginBottom: 20, padding: 16, borderRadius: 12, background: "rgba(234,179,8,0.1)", border: "1px solid rgba(234,179,8,0.3)", color: "#facc15", fontSize: 14 }}>
             {error}
-            <div className="mt-2"><Link href="/settings" className="text-cyan-400 underline">{t.connectGNS3} →</Link></div>
+            <div style={{ marginTop: 8 }}>
+              <Link href="/settings">{t.connectGNS3} →</Link>
+            </div>
           </div>
         )}
 
-        <div className="bg-[#0c1222] border border-[#1a2a4a] rounded-xl overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead className="bg-[#0a0f1a] text-gray-400">
-                <tr>
-                  <th className="text-left px-4 py-3 font-medium">{t.devices}</th>
-                  <th className="text-left px-4 py-3 font-medium">Type</th>
-                  <th className="text-left px-4 py-3 font-medium">{t.status}</th>
-                  <th className="text-left px-4 py-3 font-medium">{t.risk}</th>
-                  <th className="text-left px-4 py-3 font-medium">Score</th>
+        {/* Table */}
+        <div className="rp-card" style={{ overflow: "hidden" }}>
+          <div style={{ overflowX: "auto" }}>
+            <table>
+              <thead>
+                <tr style={{ background: "#0a0f1a" }}>
+                  <th>{t.devices}</th>
+                  <th>Type</th>
+                  <th>{t.status}</th>
+                  <th>{t.risk}</th>
+                  <th>Score</th>
                 </tr>
               </thead>
               <tbody>
                 {risks.length === 0 && !loading && (
-                  <tr><td colSpan={5} className="px-4 py-12 text-center text-gray-500">{t.noData}</td></tr>
+                  <tr>
+                    <td colSpan={5} style={{ textAlign: "center", padding: 48, color: "#64748b" }}>
+                      {t.noData}
+                    </td>
+                  </tr>
                 )}
                 {risks.map((r) => (
-                  <tr key={r.node_id} className="border-t border-[#1a2a4a] hover:bg-[#0a0f1a]/50">
-                    <td className="px-4 py-3 font-medium">{r.name}</td>
-                    <td className="px-4 py-3 text-gray-400">{nodes.find((n) => n.node_id === r.node_id)?.node_type || "—"}</td>
-                    <td className="px-4 py-3">
-                      <span className={`inline-flex px-2 py-0.5 rounded text-xs font-medium ${r.status === "started" ? "bg-green-500/15 text-green-400" : r.status === "stopped" ? "bg-red-500/15 text-red-400" : "bg-yellow-500/15 text-yellow-400"}`}>
+                  <tr key={r.node_id}>
+                    <td style={{ fontWeight: 500 }}>{r.name}</td>
+                    <td style={{ color: "#94a3b8" }}>{nodes.find((n) => n.node_id === r.node_id)?.node_type || "—"}</td>
+                    <td>
+                      <span className={`rp-badge ${r.status === "started" ? "rp-badge-green" : r.status === "stopped" ? "rp-badge-red" : "rp-badge-yellow"}`}>
                         {r.status === "started" ? t.started : r.status === "stopped" ? t.stopped : r.status}
                       </span>
                     </td>
-                    <td className="px-4 py-3">
-                      <span className={`inline-flex px-2 py-0.5 rounded text-xs font-medium risk-${r.riskLevel}`}>{t[r.riskLevel]}</span>
+                    <td>
+                      <span className={`rp-badge rp-badge-${r.riskLevel}`}>{t[r.riskLevel]}</span>
                     </td>
-                    <td className="px-4 py-3 font-mono">{r.riskScore}</td>
+                    <td style={{ fontFamily: "monospace" }}>{r.riskScore}</td>
                   </tr>
                 ))}
               </tbody>
@@ -162,7 +175,11 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {lastUpdate && <p className="mt-4 text-xs text-gray-500 text-center">{t.lastUpdate}: {lastUpdate.toLocaleTimeString()}</p>}
+        {lastUpdate && (
+          <p style={{ marginTop: 16, textAlign: "center", fontSize: 12, color: "#64748b" }}>
+            {t.lastUpdate}: {lastUpdate.toLocaleTimeString()}
+          </p>
+        )}
       </main>
     </div>
   );
